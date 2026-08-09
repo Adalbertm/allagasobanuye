@@ -1,13 +1,259 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>run</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>All Agasobanuye - Movies & Entertainment</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #272626;
+      font-family: "Poppins", sans-serif;
+      color: white;
+    }
+
+    /* Main page */
+    .home {
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Header */
+    .header {
+      width: 100%;
+      min-height: 180px;
+      background: #050505;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      text-align: center;
+      padding: 30px 15px;
+    }
+
+    .header h1 {
+      color: white;
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .header p {
+      color: #aaa;
+      font-size: clamp(14px, 2vw, 20px);
+      margin-top: 5px;
+    }
+
+    /* Cards container */
+    .film-container {
+      width: min(1200px, 92%);
+      margin: 50px auto;
+
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+    }
+
+    /* Cards */
+    .film-card {
+      min-height: 220px;
+
+      background: #0d0d0d;
+      border: 1px solid #292929;
+      border-radius: 18px;
+
+      text-decoration: none;
+      color: white;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      padding: 30px;
+      text-align: center;
+
+      transition: 0.3s ease;
+
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Website name */
+    .film-card h2 {
+      color: #ff2525;
+      font-size: clamp(25px, 4vw, 45px);
+      font-weight: 700;
+      text-transform: capitalize;
+
+      transition: 0.3s ease;
+    }
+
+    /* Visit text */
+    .film-card span {
+      margin-top: 15px;
+      color: #aaa;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* Hover */
+    .film-card:hover {
+      transform: translateY(-8px);
+      background: #151515;
+      border-color: #ff2525;
+      box-shadow: 0 15px 35px rgba(255, 0, 0, 0.18);
+    }
+
+    .film-card:hover h2 {
+      color: white;
+    }
+
+    .film-card:hover span {
+      color: #ff2525;
+    }
+
+    /* Tablet */
+    @media (max-width: 768px) {
+      .film-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        margin: 30px auto;
+      }
+
+      .film-card {
+        min-height: 180px;
+      }
+    }
+
+    /* Phone */
+    @media (max-width: 480px) {
+      .header {
+        min-height: 150px;
+      }
+
+      .film-container {
+        width: 94%;
+        margin: 25px auto;
+        gap: 16px;
+      }
+
+      .film-card {
+        min-height: 150px;
+        border-radius: 14px;
+        padding: 20px;
+      }
+
+      .film-card h2 {
+        font-size: 28px;
+      }
+
+      .film-card span {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="home">
+
+    <!-- Header -->
+    <header class="header">
+      <h1>All Agasobanuye</h1>
+      <p>Discover Movies &amp; Entertainment</p>
+    </header>
+
+    <!-- Websites -->
+    <main class="film-container">
+
+      <a
+        href="https://agasobanuyefilms.com"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Agasobanuyefilms</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://oshakurfilms.com"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Oshakurfilms</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://agasobanuyestore.com"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Agasobanuyestore</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://mujyosi.store"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Mujyosi.store</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://kinyafilms.com/"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Kinyafilms</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://www.agasobanuyetimes.com/"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Agasobanuyetimes</h2>
+        <span>Visit Website →</span>
+      </a>
+
+      <a
+        href="https://agasobanuyenow.com/"
+        class="film-card"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <h2>Agasobanuyenow</h2>
+        <span>Visit Website →</span>
+      </a>
+
+    </main>
+
+  </div>
+
+</body>
 </html>
