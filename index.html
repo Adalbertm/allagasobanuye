@@ -1,27 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-<meta name="monetag" content="8932075f61cb8cc1a8198cd7a4ccad83"/>
+  <meta name="monetag" content="8932075f61cb8cc1a8198cd7a4ccad83"/>
 
-
-
-<script
-  src="https://quge5.com/88/tag.min.js"
-  data-zone="268530"
-  async
-  data-cfasync="false">
-</script>
-
-
-
-
-
+  <script
+    src="https://quge5.com/88/tag.min.js"
+    data-zone="268530"
+    async
+    data-cfasync="false">
+  </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>All Agasobanuye - Movies & Entertainment</title>
+  <title>zosezisobanuye - Movies & Entertainment</title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
@@ -60,6 +54,8 @@
 
       text-align: center;
       padding: 30px 15px;
+
+      position: relative;
     }
 
     .header h1 {
@@ -73,6 +69,34 @@
       color: #aaa;
       font-size: clamp(14px, 2vw, 20px);
       margin-top: 5px;
+    }
+
+    /* Download App button */
+    .download-app {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+
+      background: #ff2525;
+      color: white;
+
+      text-decoration: none;
+
+      padding: 11px 20px;
+      border-radius: 10px;
+
+      font-size: 15px;
+      font-weight: 700;
+
+      box-shadow: 0 5px 15px rgba(255, 37, 37, 0.35);
+
+      transition: 0.3s ease;
+    }
+
+    .download-app:hover {
+      background: white;
+      color: #ff2525;
+      transform: translateY(-2px);
     }
 
     /* Cards container */
@@ -145,6 +169,19 @@
 
     /* Tablet */
     @media (max-width: 768px) {
+
+      .header {
+        min-height: 190px;
+        padding-top: 70px;
+      }
+
+      .download-app {
+        top: 15px;
+        right: 15px;
+        padding: 9px 15px;
+        font-size: 13px;
+      }
+
       .film-container {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -158,8 +195,25 @@
 
     /* Phone */
     @media (max-width: 480px) {
+
       .header {
-        min-height: 150px;
+        min-height: 180px;
+      }
+
+      .download-app {
+        top: 12px;
+        right: 12px;
+        padding: 8px 12px;
+        font-size: 12px;
+        border-radius: 8px;
+      }
+
+      .header h1 {
+        font-size: 36px;
+      }
+
+      .header p {
+        font-size: 13px;
       }
 
       .film-container {
@@ -182,6 +236,7 @@
         font-size: 14px;
       }
     }
+
   </style>
 </head>
 
@@ -191,8 +246,20 @@
 
     <!-- Header -->
     <header class="header">
-      <h1>All Agasobanuye</h1>
+
+      <!-- Download App -->
+      <a
+        href="YOUR_APP_DOWNLOAD_LINK_HERE"
+        class="download-app"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        📱 Download App
+      </a>
+
+      <h1>zosezisobanuye</h1>
       <p>Discover Movies &amp; Entertainment</p>
+
     </header>
 
     <!-- Websites -->
@@ -274,3 +341,4 @@
 
 </body>
 </html>
+```
