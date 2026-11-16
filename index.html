@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +15,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta name="theme-color" content="#ff2525">
+  <meta name="description" content="Discover movies and entertainment websites with zosezisobanuye.">
+  <meta name="application-name" content="zosezisobanuye">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="zosezisobanuye">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
 
   <title>zosezisobanuye - Movies & Entertainment</title>
 
@@ -309,6 +315,36 @@
       color: #ff2525;
     }
 
+    .install-mark {
+      width: 76px;
+      height: 76px;
+      margin: 18px auto;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      background: #ff2525;
+      color: white;
+      font-size: 34px;
+      font-weight: 800;
+      box-shadow: 0 8px 24px rgba(255,37,37,.3);
+    }
+
+    .install-note {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #888;
+      margin-top: 14px;
+      margin-bottom: 0;
+    }
+
+    .download-button {
+      width: 100%;
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
     /* CLOSE */
 
     .close-popup {
@@ -566,25 +602,17 @@
       Install zosezisobanuye on your device
     </p>
 
-    <!-- CHANGE THIS IMAGE -->
-
-    <img
-      src="app-screenshot.png"
-      alt="zosezisobanuye App"
-      class="app-screenshot"
-    >
-
-    <!-- CHANGE THIS LINK -->
-
-    <a
-      href="YOUR_APP_DOWNLOAD_LINK_HERE"
-      class="download-button"
-      target="_blank"
-      rel="noopener noreferrer"
-      onclick="rememberAppDownload()"
-    >
-      📥 Download App
-    </a>
+    <div class="install-mark" aria-hidden="true">▶</div>
+    <p id="installHelp">
+      Install zosezisobanuye directly from your browser. No APK is needed.
+    </p>
+    <button id="popupInstallButton" class="download-button" type="button" onclick="installApp()">
+      📲 Install App
+    </button>
+    <p class="install-note" id="installNote">
+      If installation is not available, use your browser menu and choose
+      "Install app" or "Add to Home Screen".
+    </p>
 
   </div>
 
@@ -592,112 +620,102 @@
 
 
 <script>
+  let deferredInstallPrompt = null;
 
-  /*
-  ==========================================
-  APP BUTTON
-  ==========================================
-  */
+  const appButton = document.getElementById("appButton");
+  const appPopup = document.getElementById("appPopup");
+  const installHelp = document.getElementById("installHelp");
+  const popupInstallButton = document.getElementById("popupInstallButton");
+
+  function isAppInstalled() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+           window.navigator.standalone === true;
+  }
+
+  function updateInstallButton() {
+    if (isAppInstalled()) {
+      appButton.textContent = "✓ App Installed";
+      appButton.setAttribute("aria-label", "App is installed");
+    } else {
+      appButton.textContent = "📲 Install App";
+    }
+  }
 
   function handleAppButton() {
-
-    /*
-      Check if this browser has already
-      visited/installed the web app.
-    */
-
-    const appExists =
-      localStorage.getItem("zosezisobanuye_app");
-
-    if (appExists === "true") {
-
-      /*
-        App/site already exists
-        on this browser.
-      */
-
-      window.location.href =
-        "https://zosezisobanuye.vercel.app/";
-
-    } else {
-
-      /*
-        App not detected.
-        Show download popup.
-      */
-
-      document.getElementById("appPopup").style.display = "flex";
-
+    if (isAppInstalled()) {
+      installHelp.textContent = "zosezisobanuye is already installed on this device.";
+      popupInstallButton.style.display = "none";
+      appPopup.style.display = "flex";
+      return;
     }
 
+    popupInstallButton.style.display = "block";
+    if (deferredInstallPrompt) {
+      installApp();
+    } else {
+      showInstallHelp();
+    }
   }
 
-
-  /*
-  ==========================================
-  REMEMBER DOWNLOAD
-  ==========================================
-  */
-
-  function rememberAppDownload() {
-
-    localStorage.setItem(
-      "zosezisobanuye_app",
-      "true"
-    );
-
+  function showInstallHelp() {
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    installHelp.textContent = isIOS
+      ? 'To install on iPhone/iPad: tap the Share button in Safari, then choose "Add to Home Screen".'
+      : 'To install zosezisobanuye, open your browser menu and choose "Install app" or "Add to Home Screen".';
+    appPopup.style.display = "flex";
   }
 
+  async function installApp() {
+    if (!deferredInstallPrompt) {
+      showInstallHelp();
+      return;
+    }
 
-  /*
-  ==========================================
-  CLOSE POPUP
-  ==========================================
-  */
+    deferredInstallPrompt.prompt();
+    const result = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+
+    if (result && result.outcome === "accepted") {
+      installHelp.textContent = "Installation started. Follow your device's instructions.";
+      popupInstallButton.style.display = "none";
+    } else {
+      installHelp.textContent = "Installation was cancelled. You can install later from your browser menu.";
+    }
+  }
 
   function closeAppPopup() {
-
-    document.getElementById("appPopup").style.display =
-      "none";
-
+    appPopup.style.display = "none";
   }
 
+  appPopup.addEventListener("click", function(event) {
+    if (event.target === appPopup) closeAppPopup();
+  });
 
-  /*
-  ==========================================
-  CLOSE WHEN CLICKING OUTSIDE
-  ==========================================
-  */
+  window.addEventListener("beforeinstallprompt", function(event) {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallButton();
+  });
 
-  document.getElementById("appPopup")
-    .addEventListener("click", function(event) {
+  window.addEventListener("appinstalled", function() {
+    deferredInstallPrompt = null;
+    updateInstallButton();
+    installHelp.textContent = "zosezisobanuye has been installed successfully.";
+    popupInstallButton.style.display = "none";
+  });
 
-      if (event.target === this) {
+  window.matchMedia("(display-mode: standalone)").addEventListener?.("change", updateInstallButton);
+  updateInstallButton();
 
-        closeAppPopup();
-
-      }
-
+  // Register the service worker. Service workers require HTTPS (or localhost).
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+      navigator.serviceWorker.register("./sw.js")
+        .catch(function(error) {
+          console.error("PWA service worker registration failed:", error);
+        });
     });
-
-
-  /*
-  ==========================================
-  CHECK PWA INSTALLATION
-  ==========================================
-  */
-
-  window.addEventListener(
-    "beforeinstallprompt",
-    function(event) {
-
-      event.preventDefault();
-
-      window.deferredPrompt = event;
-
-    }
-  );
-
+  }
 </script>
 
 </body>
