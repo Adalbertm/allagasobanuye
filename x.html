@@ -1,0 +1,445 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Upload Studio</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #10131c;
+    color: #fff;
+    padding: 25px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+header h1 {
+    color: #65a5ff;
+    margin-bottom: 10px;
+    font-size: 30px;
+}
+
+header p {
+    color: #999;
+}
+
+.upload-area, .paste-box {
+    background: #191f2d;
+    border: 2px dashed #568cff;
+    padding: 35px 20px;
+    text-align: center;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.upload-area p, .paste-box p {
+    color: #aaa;
+    margin: 12px 0;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.upload-btn, button {
+    display: inline-block;
+    background: #3478f6;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+}
+
+.upload-btn:hover, button:hover {
+    background: #155bd0;
+}
+
+.paste-box {
+    cursor: text;
+    outline: none;
+    min-height: 135px;
+}
+
+.paste-box:focus {
+    border: 2px solid #65a5ff;
+    background: #202b40;
+}
+
+#pastePreview {
+    color: #45dc91;
+    margin-top: 12px;
+}
+
+.section-title {
+    margin: 30px 0 15px;
+    font-size: 21px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.media-card {
+    background: #191f2d;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #30394c;
+}
+
+.media-card img,
+.media-card video {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    background: #080a10;
+}
+
+.media-info {
+    padding: 13px;
+}
+
+.media-info p {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 9px;
+    overflow-wrap: anywhere;
+}
+
+.description-label {
+    display: block;
+    color: #65a5ff;
+    font-size: 13px;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+
+.media-description {
+    width: 100%;
+    min-height: 85px;
+    background: #10131c;
+    color: white;
+    border: 1px solid #39445a;
+    border-radius: 7px;
+    padding: 10px;
+    margin-bottom: 10px;
+    resize: vertical;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+}
+
+.media-description:focus {
+    outline: none;
+    border-color: #568cff;
+}
+
+.delete-btn {
+    background: #dc3545;
+    padding: 9px 15px;
+}
+
+.delete-btn:hover {
+    background: #a71d2a;
+}
+
+.empty {
+    color: #888;
+    text-align: center;
+    padding: 25px;
+    grid-column: 1 / -1;
+}
+
+.status {
+    text-align: center;
+    color: #45dc91;
+    margin: 15px 0;
+    min-height: 20px;
+}
+
+@media(max-width:600px) {
+    body {
+        padding: 12px;
+    }
+
+    .upload-area, .paste-box {
+        padding: 25px 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Media Upload Studio</h1>
+    <p>Upload videos and photos, paste images and add descriptions.</p>
+</header>
+
+<div class="upload-area">
+    <h2>Upload Media</h2>
+    <p>Select files from your computer.</p>
+
+    <label class="upload-btn">
+        Upload Photos
+        <input type="file" id="photoInput" accept="image/*" multiple>
+    </label>
+
+    <label class="upload-btn">
+        Upload Videos
+        <input type="file" id="videoInput" accept="video/*" multiple>
+    </label>
+</div>
+
+<div class="paste-box" id="pasteBox" tabindex="0">
+    <h3>Paste Your Photo Here</h3>
+    <p>Click this area, copy an image, then press CTRL + V.</p>
+    <p>You can paste screenshots copied from Windows Snipping Tool.</p>
+    <div id="pastePreview"></div>
+</div>
+
+<div class="status" id="status"></div>
+
+<h2 class="section-title">Photos</h2>
+<div class="grid" id="photoGrid">
+    <div class="empty">No photos uploaded yet.</div>
+</div>
+
+<h2 class="section-title">Videos</h2>
+<div class="grid" id="videoGrid">
+    <div class="empty">No videos uploaded yet.</div>
+</div>
+
+</div>
+
+<script>
+const photoInput = document.getElementById("photoInput");
+const videoInput = document.getElementById("videoInput");
+const photoGrid = document.getElementById("photoGrid");
+const videoGrid = document.getElementById("videoGrid");
+const pasteBox = document.getElementById("pasteBox");
+const pastePreview = document.getElementById("pastePreview");
+const status = document.getElementById("status");
+
+let photos = [];
+let videos = [];
+
+function formatSize(bytes) {
+    return bytes >= 1024 * 1024
+        ? (bytes / (1024 * 1024)).toFixed(2) + " MB"
+        : (bytes / 1024).toFixed(2) + " KB";
+}
+
+function addFile(file, type) {
+
+    if (type === "photo" && !file.type.startsWith("image/")) return;
+    if (type === "video" && !file.type.startsWith("video/")) return;
+
+    const item = {
+        id: crypto.randomUUID(),
+        file: file,
+        url: URL.createObjectURL(file),
+        description: ""
+    };
+
+    if (type === "photo") {
+        photos.push(item);
+        renderPhotos();
+    } else {
+        videos.push(item);
+        renderVideos();
+    }
+
+    status.textContent = file.name + " added successfully.";
+}
+
+photoInput.addEventListener("change", function(e) {
+    Array.from(e.target.files).forEach(file => addFile(file, "photo"));
+    e.target.value = "";
+});
+
+videoInput.addEventListener("change", function(e) {
+    Array.from(e.target.files).forEach(file => addFile(file, "video"));
+    e.target.value = "";
+});
+
+// Paste photo support
+pasteBox.addEventListener("click", function() {
+    pasteBox.focus();
+});
+
+pasteBox.addEventListener("paste", handlePaste);
+
+document.addEventListener("paste", function(e) {
+    if (!pasteBox.contains(e.target)) {
+        handlePaste(e);
+    }
+});
+
+function handlePaste(e) {
+
+    const clipboard = e.clipboardData;
+    if (!clipboard) return;
+
+    let foundImage = false;
+
+    for (const item of clipboard.items) {
+
+        if (item.type.startsWith("image/")) {
+
+            const file = item.getAsFile();
+
+            if (file) {
+                addFile(file, "photo");
+                foundImage = true;
+            }
+        }
+    }
+
+    if (foundImage) {
+        pastePreview.textContent = "Photo pasted successfully.";
+        status.textContent = "Image added to your photos.";
+    } else {
+        status.textContent = "No image found. Copy an image first.";
+    }
+}
+
+// Create description field
+function createDescription(item) {
+
+    const label = document.createElement("label");
+    label.className = "description-label";
+    label.textContent = "Media Description";
+
+    const textarea = document.createElement("textarea");
+    textarea.className = "media-description";
+    textarea.placeholder = "Write a description of this media...";
+    textarea.value = item.description;
+
+    textarea.addEventListener("input", function() {
+        item.description = textarea.value;
+    });
+
+    return [label, textarea];
+}
+
+// Render photos
+function renderPhotos() {
+
+    photoGrid.innerHTML = "";
+
+    if (photos.length === 0) {
+        photoGrid.innerHTML =
+            '<div class="empty">No photos uploaded yet.</div>';
+        return;
+    }
+
+    photos.forEach(photo => {
+
+        const card = document.createElement("div");
+        card.className = "media-card";
+
+        const img = document.createElement("img");
+        img.src = photo.url;
+        img.alt = photo.file.name;
+
+        const info = document.createElement("div");
+        info.className = "media-info";
+
+        const name = document.createElement("p");
+        name.textContent = photo.file.name;
+
+        const size = document.createElement("p");
+        size.textContent = formatSize(photo.file.size);
+
+        const [label, description] = createDescription(photo);
+
+        const btn = document.createElement("button");
+        btn.className = "delete-btn";
+        btn.textContent = "Delete";
+
+        btn.onclick = function() {
+            URL.revokeObjectURL(photo.url);
+            photos = photos.filter(p => p.id !== photo.id);
+            renderPhotos();
+        };
+
+        info.append(name, size, label, description, btn);
+        card.append(img, info);
+        photoGrid.append(card);
+    });
+}
+
+// Render videos
+function renderVideos() {
+
+    videoGrid.innerHTML = "";
+
+    if (videos.length === 0) {
+        videoGrid.innerHTML =
+            '<div class="empty">No videos uploaded yet.</div>';
+        return;
+    }
+
+    videos.forEach(video => {
+
+        const card = document.createElement("div");
+        card.className = "media-card";
+
+        const player = document.createElement("video");
+        player.src = video.url;
+        player.controls = true;
+        player.preload = "metadata";
+
+        const info = document.createElement("div");
+        info.className = "media-info";
+
+        const name = document.createElement("p");
+        name.textContent = video.file.name;
+
+        const size = document.createElement("p");
+        size.textContent = formatSize(video.file.size);
+
+        const [label, description] = createDescription(video);
+
+        const btn = document.createElement("button");
+        btn.className = "delete-btn";
+        btn.textContent = "Delete";
+
+        btn.onclick = function() {
+            URL.revokeObjectURL(video.url);
+            videos = videos.filter(v => v.id !== video.id);
+            renderVideos();
+        };
+
+        info.append(name, size, label, description, btn);
+        card.append(player, info);
+        videoGrid.append(card);
+    });
+}
+</script>
+
+</body>
+</html>
